@@ -3,6 +3,7 @@ using System.IO;
 using Xunit;
 namespace TestingPriceCalculater
 {
+
     public class TaxTest
     {   Product product;
         Calculater calculater1;
@@ -17,13 +18,15 @@ namespace TestingPriceCalculater
             };
             calculater1 = new Calculater();
         }
-        [Fact]
-        public void TestFinalPrice1()
+        [Theory]
+        [InlineData(20,24.30)]
+        [InlineData(21, 24.50)]
+        public void TestFinalPrice1(int percentage ,decimal expected )
         {
-            MyTax = new TaxService(20);
+            MyTax = new TaxService(percentage);
             decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage());
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Assert.Equal(24.30M, FinalPrice,2);
+            Assert.Equal(expected, FinalPrice,2);
         }
         [Fact]
         public void TestDisplay()
