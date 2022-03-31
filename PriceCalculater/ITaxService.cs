@@ -1,12 +1,17 @@
-﻿interface ITaxService
+﻿public interface ITaxService
 {
+
     public decimal GetTaxPercentage();
 }
 public class TaxService :ITaxService
 {
-    public decimal Percentage { get; set; } = 20;
+    private decimal _percentage;
+    TaxService(decimal percentage)
+    {
+        this._percentage = percentage;
+    }
     public decimal GetTaxPercentage()
     {
-        return Percentage;
+        return _percentage;
     }
 }
