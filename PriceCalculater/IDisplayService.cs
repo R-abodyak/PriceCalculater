@@ -1,8 +1,8 @@
-﻿interface IDisplayService
+﻿public interface IDisplayService
 {
     public void Display(decimal value);
 }
-class ConsoleDisplayService : IDisplayService
+public class ConsoleDisplayService : IDisplayService
 {
     private string formatString = "{0,0:" + ".00" + "}";
     public void Display(decimal value)

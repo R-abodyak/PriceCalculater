@@ -6,7 +6,7 @@
 public class TaxService :ITaxService
 {
     private decimal _percentage;
-    TaxService(decimal percentage)
+    public TaxService(decimal percentage)
     {
         this._percentage = percentage;
     }
