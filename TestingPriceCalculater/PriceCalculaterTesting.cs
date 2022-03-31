@@ -28,16 +28,18 @@ namespace TestingPriceCalculater
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             Assert.Equal(expected, FinalPrice,2);
         }
-        [Fact]
-        public void TestDisplay()
+        [Theory]
+        [InlineData(20, "24.30\r\n")]
+        [InlineData(21, "24.50\r\n")]
+        public void TestDisplay(decimal percentage ,String ExpectedOutput)
         {
-            MyTax = new TaxService(20);
+            MyTax = new TaxService(percentage);
             decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage());
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             ConsoleDisplay.Display(FinalPrice);
-            Assert.Equal("24.30\r\n", stringWriter.ToString());
+            Assert.Equal(ExpectedOutput, stringWriter.ToString());
         }
     }
 }
