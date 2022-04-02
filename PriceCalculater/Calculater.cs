@@ -13,9 +13,10 @@
     {
         return Math.Round(price, 2);
     }
-    public decimal FindFinalPrice(decimal price, decimal Taxpercentage)
+    public decimal FindFinalPrice(decimal price, decimal Taxpercentage,decimal DiscountPercentage)
     {
         decimal tax = Calculate(price, Taxpercentage);
-        return ApplyPrecision(price + tax);
+        decimal discount = Calculate(price, DiscountPercentage);
+        return ApplyPrecision(price + tax - discount);
     }
 }
