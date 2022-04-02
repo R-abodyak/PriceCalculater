@@ -1,3 +1,4 @@
+using PriceCalculater;
 using System;
 using System.IO;
 using Xunit;
@@ -7,7 +8,9 @@ namespace TestingPriceCalculater
     public class TaxTest
     {   Product product;
         Calculater calculater1;
+        IDiscountService discountService;
         ITaxService MyTax;
+        
         public TaxTest()
         {
             product = new Product
@@ -19,22 +22,24 @@ namespace TestingPriceCalculater
             calculater1 = new Calculater();
         }
         [Theory]
-        [InlineData(20,24.30)]
-        [InlineData(21, 24.50)]
-        public void TestFinalPrice1(int percentage ,decimal expected )
+        [InlineData(20,15,21.26)]
+        [InlineData(21,15, 21.46)]
+        public void TestFinalPrice1(decimal TaxPercentage,decimal DiscountPercentage ,decimal expected )
         {
-            MyTax = new TaxService(percentage);
-            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage());
+            MyTax = new TaxService(TaxPercentage);
+            discountService = new DiscountService(DiscountPercentage);
+            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(),discountService.GetDiscountPercentage());
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             Assert.Equal(expected, FinalPrice,2);
         }
         [Theory]
-        [InlineData(20, "24.30\r\n")]
-        [InlineData(21, "24.50\r\n")]
-        public void TestDisplay(decimal percentage ,String ExpectedOutput)
+        [InlineData(20,15, "21.26\r\n")]
+        [InlineData(21,15, "21.46\r\n")]
+        public void TestDisplay(decimal TaxPercentage , decimal DiscountPercentage,String ExpectedOutput)
         {
-            MyTax = new TaxService(percentage);
-            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage());
+            MyTax = new TaxService(TaxPercentage);
+            discountService = new DiscountService(DiscountPercentage);
+            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(), discountService.GetDiscountPercentage());
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();

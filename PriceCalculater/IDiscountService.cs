@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PriceCalculater
 {
-    internal interface IDiscountService
+    public   interface IDiscountService
     {
         public decimal GetDiscountPercentage();
     }
