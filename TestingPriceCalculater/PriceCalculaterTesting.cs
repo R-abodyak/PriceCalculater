@@ -4,13 +4,11 @@ using System.IO;
 using Xunit;
 namespace TestingPriceCalculater
 {
-
     public class TaxTest
     {   Product product;
         Calculater calculater1;
         IDiscountService discountService;
         ITaxService MyTax;
-        
         public TaxTest()
         {
             product = new Product
@@ -29,7 +27,6 @@ namespace TestingPriceCalculater
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
             decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(),discountService.GetDiscountPercentage());
-            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             Assert.Equal(expected, FinalPrice,2);
         }
         [Theory]
@@ -44,6 +41,22 @@ namespace TestingPriceCalculater
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             ConsoleDisplay.Display(FinalPrice);
+            Assert.Equal(ExpectedOutput, stringWriter.ToString());
+        }
+
+        [Theory]
+        [InlineData(20, 15, "21.26\r\n3.04\r\n")]
+        [InlineData(20, 0, "24.30\r\n")]
+        public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
+        {
+            MyTax = new TaxService(TaxPercentage);
+            discountService = new DiscountService(DiscountPercentage);
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price, MyTax.GetTaxPercentage(), discountService.GetDiscountPercentage());
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
+            Report report = new Report(ConsoleDisplay, productPriceDetails);
+            report.DisplayProductReport();
             Assert.Equal(ExpectedOutput, stringWriter.ToString());
         }
     }
