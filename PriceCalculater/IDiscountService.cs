@@ -12,8 +12,11 @@ namespace PriceCalculater
     public class DiscountService : IDiscountService
     {
         private readonly decimal _percentage;
-        public DiscountService(decimal percentage)
+        public bool IsBefore;
+        public DiscountService(decimal percentage) : this(percentage, false) { }
+        public DiscountService(decimal percentage, bool IsBefore)
         {
+            this.IsBefore = IsBefore;
             this._percentage = percentage;
         }
         public decimal GetDiscountPercentage()
@@ -25,10 +28,18 @@ namespace PriceCalculater
     {
         private readonly Dictionary<long,decimal> _UpcDiscountList;
         private readonly long _upc;
+        public bool IsBefore;
         public UpcDiscountService(Dictionary<long, decimal> UpcDiscountList,long upc)
         {
             this._UpcDiscountList = UpcDiscountList;
             this._upc = upc;
+            IsBefore = false;
+        }
+        public UpcDiscountService(Dictionary<long, decimal> UpcDiscountList, long upc,bool IsBefore)
+        {
+            this._UpcDiscountList = UpcDiscountList;
+            this._upc = upc;
+            this.IsBefore = IsBefore;
         }
         public decimal GetDiscountPercentage()
         {
