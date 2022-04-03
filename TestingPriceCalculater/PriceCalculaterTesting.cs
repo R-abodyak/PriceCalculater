@@ -1,5 +1,6 @@
 using PriceCalculater;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 namespace TestingPriceCalculater
@@ -8,25 +9,38 @@ namespace TestingPriceCalculater
     {   Product product;
         Calculater calculater1;
         IDiscountService discountService;
+        IDiscountService UpcdiscountService;
+        Dictionary<long, decimal> UpcDiscountDictonary;
         ITaxService MyTax;
         public TaxTest()
         {
             product = new Product
             {
                 Name = "mybook",
-                UPC = 123,
+                UPC = 1234,
                 Price = 20.25M
             };
-            calculater1 = new Calculater();
+             UpcDiscountDictonary = new Dictionary<long, decimal>
+            {
+                {123,20 },
+                {567,12 }
+            };
+            
+
+
         }
         [Theory]
         [InlineData(20,15,21.26)]
         [InlineData(21,15, 21.46)]
         public void TestFinalPrice1(decimal TaxPercentage,decimal DiscountPercentage ,decimal expected )
         {
+
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
-            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(),discountService.GetDiscountPercentage());
+            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary,product.UPC);
+            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
+            ProductPriceDetails productPriceDetails =calculater1.FindProductDetails(product.Price);
+            decimal FinalPrice = productPriceDetails.FinalPrice;
             Assert.Equal(expected, FinalPrice,2);
         }
         [Theory]
@@ -36,7 +50,10 @@ namespace TestingPriceCalculater
         {
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
-            decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(), discountService.GetDiscountPercentage());
+            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
+            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
+            decimal FinalPrice = productPriceDetails.FinalPrice;
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
@@ -51,7 +68,10 @@ namespace TestingPriceCalculater
         {
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price, MyTax.GetTaxPercentage(), discountService.GetDiscountPercentage());
+            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
+            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
+            decimal FinalPrice = productPriceDetails.FinalPrice;
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
