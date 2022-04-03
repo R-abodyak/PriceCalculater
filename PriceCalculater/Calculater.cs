@@ -17,6 +17,6 @@
     {
         decimal tax = Calculate(price, Taxpercentage);
         decimal discount = Calculate(price, DiscountPercentage);
-        return ApplyPrecision(price + tax - discount);
+        return ApplyPrecision(price + tax -  discount);
     }
 }

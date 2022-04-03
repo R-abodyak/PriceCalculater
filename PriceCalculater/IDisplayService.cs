@@ -10,6 +10,7 @@ public class ConsoleDisplayService : IDisplayService
     {
         Console.WriteLine(formatString, value);
     }
+
 }
 
 

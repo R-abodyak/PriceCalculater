@@ -4,13 +4,11 @@ using System.IO;
 using Xunit;
 namespace TestingPriceCalculater
 {
-
     public class TaxTest
     {   Product product;
         Calculater calculater1;
         IDiscountService discountService;
         ITaxService MyTax;
-        
         public TaxTest()
         {
             product = new Product
@@ -29,7 +27,6 @@ namespace TestingPriceCalculater
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
             decimal FinalPrice = calculater1.FindFinalPrice(product.Price, MyTax.GetTaxPercentage(),discountService.GetDiscountPercentage());
-            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             Assert.Equal(expected, FinalPrice,2);
         }
         [Theory]
