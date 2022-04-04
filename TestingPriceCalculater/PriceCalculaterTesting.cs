@@ -59,5 +59,22 @@ namespace TestingPriceCalculater
             report.DisplayProductReport();
             Assert.Equal(ExpectedOutput, stringWriter.ToString());
         }
+        [Fact]
+        public void testPrecedenceBranch()
+        {
+            MyTax = new TaxService(20);
+            discountService = new DiscountService(15);
+            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC,true);
+            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
+            decimal FinalPrice = productPriceDetails.FinalPrice;
+            var stringWriter = new StringWriter();
+            Console.SetOut(stringWriter);
+            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
+            Report report = new Report(ConsoleDisplay, productPriceDetails);
+            report.DisplayProductReport();
+            Assert.Equal("19.78\r\n4.24\r\n", stringWriter.ToString());
+        }
+
     }
 }

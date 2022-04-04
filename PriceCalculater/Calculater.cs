@@ -42,7 +42,7 @@ public class Calculater {
             dicountBefore += discount;
         }
         if (_upcDiscountService.GetIsBefore()) {
-            decimal discount = productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
+            decimal discount = productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _upcDiscountService.GetDiscountPercentage());
             DecreseFinalPrice(discount);
             dicountBefore += discount;
         }
