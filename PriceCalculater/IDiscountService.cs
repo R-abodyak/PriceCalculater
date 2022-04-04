@@ -8,11 +8,12 @@ namespace PriceCalculater
     public   interface IDiscountService
     {
         public decimal GetDiscountPercentage();
+        public bool GetIsBefore();
     }
     public class DiscountService : IDiscountService
     {
         private readonly decimal _percentage;
-        public bool IsBefore;
+        private bool IsBefore;
         public DiscountService(decimal percentage) : this(percentage, false) { }
         public DiscountService(decimal percentage, bool IsBefore)
         {
@@ -22,6 +23,11 @@ namespace PriceCalculater
         public decimal GetDiscountPercentage()
         {
             return _percentage;
+        }
+
+        public bool GetIsBefore()
+        {
+            return IsBefore;
         }
     }
     public class UpcDiscountService : IDiscountService
@@ -45,6 +51,10 @@ namespace PriceCalculater
         {
             if (!_UpcDiscountList.ContainsKey(_upc)) return 0;
             return _UpcDiscountList[_upc];
+        }
+        public bool GetIsBefore()
+        {
+            return IsBefore;
         }
     }
 }

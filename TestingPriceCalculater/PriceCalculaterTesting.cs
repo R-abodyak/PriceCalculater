@@ -6,7 +6,8 @@ using Xunit;
 namespace TestingPriceCalculater
 {
     public class TaxTest
-    {   Product product;
+    {
+        Product product;
         Calculater calculater1;
         IDiscountService discountService;
         IDiscountService UpcdiscountService;
@@ -20,7 +21,7 @@ namespace TestingPriceCalculater
                 UPC = 1234,
                 Price = 20.25M
             };
-          
+
             UpcDiscountDictonary = new Dictionary<long, decimal>
             {
                 {1234,7 },
@@ -28,18 +29,18 @@ namespace TestingPriceCalculater
             };
         }
         [Theory]
-        [InlineData(20,15,19.84)]
-        public void TestFinalPrice1(decimal TaxPercentage,decimal DiscountPercentage ,decimal expected )
+        [InlineData(20, 15, 19.84)]
+        public void TestFinalPrice1(decimal TaxPercentage, decimal DiscountPercentage, decimal expected)
         {
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
-            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary,product.UPC);
+            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
             calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
-            ProductPriceDetails productPriceDetails =calculater1.FindProductDetails(product.Price);
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
             decimal FinalPrice = productPriceDetails.FinalPrice;
-            Assert.Equal(expected, FinalPrice,2);
+            Assert.Equal(expected, FinalPrice, 2);
         }
-       
+
         [Theory]
         [InlineData(20, 15, "19.84\r\n4.46\r\n")]
         //[InlineData(21, 15, "21.46\r\n3.04\r\n")]
