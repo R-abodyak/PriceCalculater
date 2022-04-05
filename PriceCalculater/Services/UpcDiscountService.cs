@@ -1,35 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-namespace PriceCalculater
+﻿namespace PriceCalculater
 {
-    public   interface IDiscountService
-    {
-        public decimal GetDiscountPercentage();
-        public bool GetIsBefore();
-    }
-    public class DiscountService : IDiscountService
-    {
-        private readonly decimal _percentage;
-        private bool IsBefore;
-        public DiscountService(decimal percentage) : this(percentage, false) { }
-        public DiscountService(decimal percentage, bool IsBefore)
-        {
-            this.IsBefore = IsBefore;
-            this._percentage = percentage;
-        }
-        public decimal GetDiscountPercentage()
-        {
-            return _percentage;
-        }
-
-        public bool GetIsBefore()
-        {
-            return IsBefore;
-        }
-    }
     public class UpcDiscountService : IDiscountService
     {
         private readonly Dictionary<long,decimal> _UpcDiscountList;
