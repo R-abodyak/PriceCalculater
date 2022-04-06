@@ -1,4 +1,5 @@
 ﻿using PriceCalculater;
+using PriceCalculater.CAP;
 using PriceCalculater.Cost;
 public class Calculater
 {
@@ -7,6 +8,7 @@ public class Calculater
     private readonly IDiscountService _upcDiscountService;
     private readonly List<Cost> _costList;
     public Combining CombiningDiscount { get; set; } = Combining.additive;
+    public Cap Cap1 { get; set ; } 
     public Calculater(ITaxService taxService, IDiscountService discountService,
         IDiscountService upcDiscountService, List<Cost> costList)
     {
@@ -36,10 +38,18 @@ public class Calculater
         ProductPriceDetails productPriceDetails = new ProductPriceDetails();
         productPriceDetails.BasePrice = price;
         productPriceDetails.FinalPrice = price;
-        decimal discountBefore = CalculateDiscountBefore(productPriceDetails);
-        decimal discountAfter = CalculateDiscountAfter(productPriceDetails);
-       
-        decimal tax = productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
+        CalculateTax(productPriceDetails);
+        CalculatCost(price, productPriceDetails);
+        CalculateTotalDiscount(price, productPriceDetails);
+        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.BasePrice - productPriceDetails.DiscountAmount - productPriceDetails.UpcDiscountAmount + productPriceDetails.TaxAmount + productPriceDetails.TotalCostAmount);
+        return productPriceDetails;
+    }
+    private void CalculateTax(ProductPriceDetails productPriceDetails)
+    {
+        productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
+    }
+    private void CalculatCost(decimal price, ProductPriceDetails productPriceDetails)
+    {
         decimal costAmount = 0;
         if (_costList != null && _costList.Count != 0)
         {
@@ -48,18 +58,14 @@ public class Calculater
                 costAmount += productPriceDetails.TotalCostAmount += item.Calculate(price);
             }
         }
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.BasePrice - productPriceDetails.DiscountAmount - productPriceDetails.UpcDiscountAmount + productPriceDetails.TaxAmount + productPriceDetails.TotalCostAmount);
-        return productPriceDetails;
     }
-    public decimal CalculateDiscountBefore(ProductPriceDetails productPriceDetails)
+    private decimal CalculateDiscountBefore(ProductPriceDetails productPriceDetails)
     {
         decimal dicountBefore = 0;
-
         void DecreseFinalPrice(decimal discount)
         { 
             productPriceDetails.FinalPrice -= discount; 
         }
-
         if (_discountService.GetIsBefore())
         {
             decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.BasePrice, _discountService.GetDiscountPercentage());
@@ -75,14 +81,12 @@ public class Calculater
         }
         return dicountBefore;
     }
-
     private decimal GetCombiningPrice(decimal price1,decimal price2)
     {
         decimal CombiningPrice = CombiningDiscount == Combining.additive ? price1 : price2;
         return CombiningPrice;
     }
-
-    public decimal CalculateDiscountAfter(ProductPriceDetails productPriceDetails)
+    private decimal CalculateDiscountAfter(ProductPriceDetails productPriceDetails)
     {
         decimal discountAfter = 0;
         if (!_discountService.GetIsBefore())
@@ -96,6 +100,18 @@ public class Calculater
             discountAfter += productPriceDetails.UpcDiscountAmount = Calculate(CombiningPrice, _upcDiscountService.GetDiscountPercentage());
         }
         return discountAfter;
+    }
+    public decimal CalculateTotalDiscount(decimal basePrice,ProductPriceDetails productPriceDetails)
+    {
+        decimal discountBefore = CalculateDiscountBefore(productPriceDetails);
+        decimal discountAfter = CalculateDiscountAfter(productPriceDetails);
+        decimal TotalDiscountAmount = discountBefore + discountAfter;
+        if (Cap1._amountValue == 0) return productPriceDetails.TotalDiscountAmount;
+        decimal CapCalculatedResult = 0;
+        if (Cap1._capType == AmountType.relative) CapCalculatedResult = Cap1._amountValue;
+        else CapCalculatedResult = Calculate(basePrice, Cap1._amountValue);
+        productPriceDetails.TotalDiscountAmount =Math.Min(TotalDiscountAmount, CapCalculatedResult);
+        return productPriceDetails.TotalDiscountAmount;
     }
 }
 public enum Combining

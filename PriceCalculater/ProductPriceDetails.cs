@@ -5,5 +5,6 @@
     public decimal TaxAmount { get; set; }
     public decimal DiscountAmount { get; set; }
     public decimal UpcDiscountAmount { get;  set; }
+    public decimal TotalDiscountAmount { get; set; }
     public decimal TotalCostAmount { get; set; } 
 }

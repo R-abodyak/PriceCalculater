@@ -8,9 +8,9 @@ namespace PriceCalculater.CAP
 {
     public class Cap
     {
-        private AmountType _capType;
-        private decimal _amountValue;
-        Cap(AmountType capType, decimal amountValue)
+        public AmountType _capType { get; }= AmountType.relative;
+        public decimal _amountValue { get; } = 0;
+        public Cap(AmountType capType, decimal amountValue)
         {
             this._capType = capType;
             this._amountValue = amountValue;
