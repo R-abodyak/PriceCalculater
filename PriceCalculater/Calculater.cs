@@ -45,7 +45,7 @@ public class Calculater {
         {
             foreach(Cost item in _costList)
             {
-                costAmount+=item.Calculate(productPriceDetails.FinalPrice);
+                costAmount+= productPriceDetails.TotalCostAmount+= item.Calculate(price);
             }
         }
         productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice- discountAfter+tax+costAmount);

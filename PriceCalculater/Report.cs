@@ -10,5 +10,8 @@
     public void DisplayProductReport()
     {   _displayService.Display(_productPriceDetails.FinalPrice);
         _displayService.Display(_productPriceDetails.DiscountAmount+_productPriceDetails.UpcDiscountAmount);
+        _displayService.Display(_productPriceDetails.TotalCostAmount);
     }
-}
+
+    }
+
