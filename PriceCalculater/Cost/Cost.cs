@@ -1,16 +1,13 @@
-﻿
-namespace PriceCalculater.Cost
+﻿namespace PriceCalculater.Cost
 {
     public class  Cost
     {
         private CostDescription pacakging;
         private CostAmountType percentage;
         private int v;
-
         public  CostDescription Description { get; }
         public  CostAmountType AmountType { get; }
         public  decimal AmountValue { get; }
-
         public decimal Calculate (decimal price)
         {
             if (AmountType == CostAmountType.relative) return AmountValue;
@@ -22,7 +19,5 @@ namespace PriceCalculater.Cost
             this.AmountType = AmountType;
             this.AmountValue = AmountValue;
         }
-
-        
     }
 }

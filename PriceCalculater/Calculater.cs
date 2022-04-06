@@ -1,24 +1,27 @@
 ﻿using PriceCalculater;
 using PriceCalculater.Cost;
-public class Calculater {
-    private  readonly ITaxService _taxService;
+public class Calculater
+{
+    private readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly IDiscountService _upcDiscountService;
     private readonly List<Cost> _costList;
     public Combining CombiningDiscount { get; set; }
-    public Calculater(ITaxService taxService , IDiscountService discountService , 
-        IDiscountService upcDiscountService,List<Cost> costList)
-    {    if (taxService == null || discountService == null || upcDiscountService == null)
+    public Calculater(ITaxService taxService, IDiscountService discountService,
+        IDiscountService upcDiscountService, List<Cost> costList)
+    {
+        if (taxService == null || discountService == null || upcDiscountService == null)
             throw new Exception("why are u passing me null :( ");
         _taxService = taxService;
         _discountService = discountService;
         _upcDiscountService = upcDiscountService;
         _costList = costList;
-            }
+    }
     public Calculater(ITaxService taxService, IDiscountService discountService,
-        IDiscountService upcDiscountService):this ( taxService,  discountService,
-         upcDiscountService, null){ }
-  public decimal Calculate(decimal price ,decimal percentage)
+        IDiscountService upcDiscountService) : this(taxService, discountService,
+         upcDiscountService, null)
+    { }
+    public decimal Calculate(decimal price, decimal percentage)
     {
         ApplyPrecision(price);
         decimal amount = (percentage / 100) * price;
@@ -28,42 +31,52 @@ public class Calculater {
     {
         return Math.Round(price, 2);
     }
-     public ProductPriceDetails FindProductDetails(decimal price)
+    public ProductPriceDetails FindProductDetails(decimal price)
     {
         ProductPriceDetails productPriceDetails = new ProductPriceDetails();
         productPriceDetails.BasePrice = price;
         productPriceDetails.FinalPrice = price;
-        decimal discountBefore= CalculateDiscountBefore(productPriceDetails);
-        decimal discountAfter= CalculateDiscountAfter(productPriceDetails);
+        decimal discountBefore = CalculateDiscountBefore(productPriceDetails);
+        decimal discountAfter = CalculateDiscountAfter(productPriceDetails);
         decimal tax = productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
         decimal costAmount = 0;
-        if (_costList!= null && _costList.Count != 0)
+        if (_costList != null && _costList.Count != 0)
         {
-            foreach(Cost item in _costList)
+            foreach (Cost item in _costList)
             {
-                costAmount+= productPriceDetails.TotalCostAmount+= item.Calculate(price);
+                costAmount += productPriceDetails.TotalCostAmount += item.Calculate(price);
             }
         }
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice- discountAfter+tax+costAmount);
+        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice - discountAfter + tax + costAmount);
         return productPriceDetails;
     }
-    public decimal CalculateDiscountBefore( ProductPriceDetails productPriceDetails) {
+    public decimal CalculateDiscountBefore(ProductPriceDetails productPriceDetails)
+    {
         decimal dicountBefore = 0;
-         void DecreseFinalPrice(decimal discount) 
-        {productPriceDetails.FinalPrice -= discount; }
+        void DecreseFinalPrice(decimal discount)
+        { productPriceDetails.FinalPrice -= discount; }
         if (_discountService.GetIsBefore())
         {
-            decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
+            decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.BasePrice, _discountService.GetDiscountPercentage());
             DecreseFinalPrice(discount);
             dicountBefore += discount;
         }
-        if (_upcDiscountService.GetIsBefore()) {
-            decimal discount = productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _upcDiscountService.GetDiscountPercentage());
+        decimal CombiningPrice =GetCombiningPrice(productPriceDetails.BasePrice, productPriceDetails.FinalPrice);
+        if (_upcDiscountService.GetIsBefore())
+        {
+            decimal discount = productPriceDetails.UpcDiscountAmount = Calculate(CombiningPrice, _upcDiscountService.GetDiscountPercentage());
             DecreseFinalPrice(discount);
             dicountBefore += discount;
         }
         return dicountBefore;
     }
+
+    private decimal GetCombiningPrice(decimal price1,decimal price2)
+    {
+        decimal CombiningPrice = CombiningDiscount == Combining.additive ? price1 : price2;
+        return CombiningPrice;
+    }
+
     public decimal CalculateDiscountAfter(ProductPriceDetails productPriceDetails)
     {
         decimal discountAfter = 0;
@@ -71,14 +84,16 @@ public class Calculater {
         {
             discountAfter += productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
         }
+        decimal partalFinalPrice = productPriceDetails.FinalPrice - discountAfter;
+        decimal CombiningPrice = GetCombiningPrice(productPriceDetails.FinalPrice,partalFinalPrice);
         if (!_upcDiscountService.GetIsBefore())
         {
-            discountAfter += productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _upcDiscountService.GetDiscountPercentage());
+            discountAfter += productPriceDetails.UpcDiscountAmount = Calculate(CombiningPrice, _upcDiscountService.GetDiscountPercentage());
         }
         return discountAfter;
     }
 }
 public enum Combining
 {
-    additive , multiplictive
+    additive, multiplictive
 }
