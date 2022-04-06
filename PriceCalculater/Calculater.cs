@@ -2,14 +2,11 @@
 using PriceCalculater.Cost;
 
 public class Calculater {
-    private  ITaxService _taxService;
+    private  readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly IDiscountService _upcDiscountService;
     private readonly List<Cost> _costList;
-    public bool isNull() {
-        bool x= (_taxService == null) ? true : false;
-        return x;
-    }
+  
     public Calculater(ITaxService taxService , IDiscountService discountService , 
         IDiscountService upcDiscountService,List<Cost> costList)
     {    if (taxService == null || discountService == null || upcDiscountService == null)
@@ -36,6 +33,7 @@ public class Calculater {
      public ProductPriceDetails FindProductDetails(decimal price)
     {
         ProductPriceDetails productPriceDetails = new ProductPriceDetails();
+        productPriceDetails.BasePrice = price;
         productPriceDetails.FinalPrice = price;
         decimal discountBefore= CalculateDiscountBefore(productPriceDetails);
         decimal discountAfter= CalculateDiscountAfter(productPriceDetails);

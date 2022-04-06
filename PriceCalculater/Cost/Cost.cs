@@ -7,20 +7,20 @@ namespace PriceCalculater.Cost
         private CostAmountType percentage;
         private int v;
 
-        public  CostDescription _description { get; }
-        public  CostAmountType _amountType { get; }
-        public  decimal _amountValue { get; }
+        public  CostDescription Description { get; }
+        public  CostAmountType AmountType { get; }
+        public  decimal AmountValue { get; }
 
         public decimal Calculate (decimal price)
         {
-            if (_amountType == CostAmountType.relative) return _amountValue;
-            else return (_amountValue / 100) * price;
+            if (AmountType == CostAmountType.relative) return AmountValue;
+            else return (AmountValue / 100) * price;
         }
        public Cost(CostDescription Description, CostAmountType AmountType, decimal AmountValue)
         {
-            this._description = Description;
-            this._amountType = AmountType;
-            this._amountValue = AmountValue;
+            this.Description = Description;
+            this.AmountType = AmountType;
+            this.AmountValue = AmountValue;
         }
 
         
