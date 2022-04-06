@@ -67,8 +67,8 @@ namespace TestingPriceCalculater
         public void testExpensesBrancha()
         {
             List<Cost> costList = new List<Cost>();
-            Cost packging = new Cost(CostDescription.Pacakging, CostAmountType.percentage, 1);
-            Cost transport = new Cost(CostDescription.Transport, CostAmountType.relative, 2.2m);
+            Cost packging = new Cost(CostDescription.Pacakging, AmountType.percentage, 1);
+            Cost transport = new Cost(CostDescription.Transport, AmountType.relative, 2.2m);
             costList.Add(packging);
             costList.Add(transport);
             Calculater calculater2 = new Calculater(MyTax, discountService, UpcdiscountService, costList);
@@ -88,8 +88,8 @@ namespace TestingPriceCalculater
             discountService = new DiscountService(15);
             List<Cost> costList = new List<Cost>();
             UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
-            Cost packging = new Cost(CostDescription.Pacakging, CostAmountType.percentage, 1);
-            Cost transport = new Cost(CostDescription.Transport, CostAmountType.relative, 2.2m);
+            Cost packging = new Cost(CostDescription.Pacakging, AmountType.percentage, 1);
+            Cost transport = new Cost(CostDescription.Transport, AmountType.relative, 2.2m);
             costList.Add(packging);
             costList.Add(transport);
             Calculater calculater2 = new Calculater(MyTax, discountService, UpcdiscountService, costList);

@@ -2,18 +2,16 @@
 {
     public class  Cost
     {
-        private CostDescription pacakging;
-        private CostAmountType percentage;
-        private int v;
+        
         public  CostDescription Description { get; }
-        public  CostAmountType AmountType { get; }
+        public  AmountType AmountType { get; }
         public  decimal AmountValue { get; }
         public decimal Calculate (decimal price)
         {
-            if (AmountType == CostAmountType.relative) return AmountValue;
+            if (AmountType == AmountType.relative) return AmountValue;
             else return (AmountValue / 100) * price;
         }
-       public Cost(CostDescription Description, CostAmountType AmountType, decimal AmountValue)
+       public Cost(CostDescription Description, AmountType AmountType, decimal AmountValue)
         {
             this.Description = Description;
             this.AmountType = AmountType;
