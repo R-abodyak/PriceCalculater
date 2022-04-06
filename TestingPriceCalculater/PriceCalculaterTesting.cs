@@ -12,7 +12,7 @@ namespace TestingPriceCalculater
         IDiscountService discountService;
         IDiscountService UpcdiscountService;
         Dictionary<long, decimal> UpcDiscountDictonary;
-        ITaxService MyTax;
+        ITaxService? MyTax;
         public TaxTest()
         {
             product = new Product
@@ -36,24 +36,27 @@ namespace TestingPriceCalculater
             discountService = new DiscountService(DiscountPercentage);
             UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
             calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
+           
             ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
             decimal FinalPrice = productPriceDetails.FinalPrice;
             Assert.Equal(expected, FinalPrice, 2);
         }
 
         [Theory]
-        [InlineData(20, 15, "19.84\r\n4.46\r\n")]
-        //[InlineData(21, 15, "21.46\r\n3.04\r\n")]
+        [InlineData(2, 15, "19.84\r\n4.46\r\n")]
+        //[InlineData(1, 15, "21.46\r\n3.04\r\n")]
         public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
         {
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage);
             UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
             calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
+            Console.WriteLine(calculater1.isNull());
+            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
+            decimal FinalPrice = productPriceDetails.FinalPrice;
+          
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
             Report report = new Report(ConsoleDisplay, productPriceDetails);
             report.DisplayProductReport();

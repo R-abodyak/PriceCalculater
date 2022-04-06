@@ -1,14 +1,23 @@
 ﻿using PriceCalculater;
+using PriceCalculater.Cost;
+
 public class Calculater {
-    private readonly ITaxService _taxService;
+    private  ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly IDiscountService _upcDiscountService;
-    public Calculater(ITaxService taxService , IDiscountService discountService , IDiscountService upcDiscountService)
+    private readonly List<Cost> _costList;
+    public bool isNull() {
+        bool x= (_taxService == null) ? true : false;
+        return x;
+    }
+    public Calculater(ITaxService taxService , IDiscountService discountService , 
+        IDiscountService upcDiscountService,List<Cost> costList)
     {    if (taxService == null || discountService == null || upcDiscountService == null)
             throw new Exception("why are u passing me null :( ");
         _taxService = taxService;
         _discountService = discountService;
         _upcDiscountService = upcDiscountService;
+        _costList = costList;
     }
   public decimal Calculate(decimal price ,decimal percentage)
     {
