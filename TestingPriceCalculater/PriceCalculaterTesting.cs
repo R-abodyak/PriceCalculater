@@ -73,7 +73,7 @@ namespace TestingPriceCalculater
             Assert.Equal("19.78\r\n4.24\r\n", stringWriter.ToString());
         }
         [Fact]
-        public void testExpensesBranch()
+        public void testExpensesBrancha()
         {
             List<Cost> costList = new List<Cost>();
             Cost packging = new Cost(CostDescription.Pacakging, CostAmountType.percentage, 1);
