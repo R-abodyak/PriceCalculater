@@ -18,6 +18,7 @@ public class Calculater
         _discountService = discountService;
         _upcDiscountService = upcDiscountService;
         _costList = costList;
+
     }
     public Calculater(ITaxService taxService, IDiscountService discountService,
         IDiscountService upcDiscountService) : this(taxService, discountService,
@@ -25,28 +26,30 @@ public class Calculater
     { }
     public decimal Calculate(decimal price, decimal percentage)
     {
-        ApplyPrecision(price);
+        ApplyPrecision(price ,4);
         decimal amount = (percentage / 100) * price;
-        return ApplyPrecision(amount);
+        return ApplyPrecision(amount,4);
     }
-    public decimal ApplyPrecision(decimal price)
+    public decimal ApplyPrecision(decimal price ,int i)
     {
-        return Math.Round(price, 2);
+        return Math.Round(price, i);
     }
     public ProductPriceDetails FindProductDetails(decimal price)
     {
+        int internalPrecision = 4;
+        int FinalPrecision = 2;
         ProductPriceDetails productPriceDetails = new ProductPriceDetails();
-        productPriceDetails.BasePrice = price;
-        productPriceDetails.FinalPrice = price;
-        CalculateTax(productPriceDetails);
+        productPriceDetails.BasePrice = ApplyPrecision(price, internalPrecision);
+        productPriceDetails.FinalPrice = ApplyPrecision(price, internalPrecision);
+        CalculateTax(productPriceDetails.FinalPrice, productPriceDetails); 
         CalculatCost(price, productPriceDetails);
         CalculateTotalDiscount(price, productPriceDetails);
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.BasePrice - productPriceDetails.DiscountAmount - productPriceDetails.UpcDiscountAmount + productPriceDetails.TaxAmount + productPriceDetails.TotalCostAmount);
+        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.BasePrice - productPriceDetails.DiscountAmount - productPriceDetails.UpcDiscountAmount + productPriceDetails.TaxAmount + productPriceDetails.TotalCostAmount,FinalPrecision);
         return productPriceDetails;
     }
-    private void CalculateTax(ProductPriceDetails productPriceDetails)
+    private void CalculateTax(decimal price ,ProductPriceDetails productPriceDetails)
     {
-        productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
+        productPriceDetails.TaxAmount = Calculate(price, _taxService.GetTaxPercentage());
     }
     private void CalculatCost(decimal price, ProductPriceDetails productPriceDetails)
     {
