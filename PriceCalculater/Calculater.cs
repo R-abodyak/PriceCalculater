@@ -1,12 +1,11 @@
 ﻿using PriceCalculater;
 using PriceCalculater.Cost;
-
 public class Calculater {
     private  readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly IDiscountService _upcDiscountService;
     private readonly List<Cost> _costList;
-  
+    public Combining CombiningDiscount { get; set; }
     public Calculater(ITaxService taxService , IDiscountService discountService , 
         IDiscountService upcDiscountService,List<Cost> costList)
     {    if (taxService == null || discountService == null || upcDiscountService == null)
@@ -19,7 +18,6 @@ public class Calculater {
     public Calculater(ITaxService taxService, IDiscountService discountService,
         IDiscountService upcDiscountService):this ( taxService,  discountService,
          upcDiscountService, null){ }
-    
   public decimal Calculate(decimal price ,decimal percentage)
     {
         ApplyPrecision(price);
@@ -53,7 +51,6 @@ public class Calculater {
         decimal dicountBefore = 0;
          void DecreseFinalPrice(decimal discount) 
         {productPriceDetails.FinalPrice -= discount; }
-
         if (_discountService.GetIsBefore())
         {
             decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
@@ -80,5 +77,8 @@ public class Calculater {
         }
         return discountAfter;
     }
-    
+}
+public enum Combining
+{
+    additive , multiplictive
 }
