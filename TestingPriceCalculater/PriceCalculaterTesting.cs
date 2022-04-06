@@ -43,7 +43,7 @@ namespace TestingPriceCalculater
         }
 
         [Theory]
-        [InlineData(2, 15, "19.84\r\n4.46\r\n")]
+        [InlineData(20, 15, "19.84\r\n4.46\r\n")]
         //[InlineData(1, 15, "21.46\r\n3.04\r\n")]
         public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
         {
@@ -53,7 +53,6 @@ namespace TestingPriceCalculater
             calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
-            Console.WriteLine(calculater1.isNull());
             ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
             decimal FinalPrice = productPriceDetails.FinalPrice;
           

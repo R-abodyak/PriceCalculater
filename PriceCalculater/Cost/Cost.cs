@@ -1,11 +1,17 @@
 ﻿
 namespace PriceCalculater.Cost
 {
-      class  Cost
+    public class  Cost
     {
-        private readonly CostDescription _description;
-        private readonly CostAmountType _amountType;
-        private readonly decimal _amountValue;
+        public  CostDescription _description { get; }
+        public  CostAmountType _amountType { get; }
+        public  decimal _amountValue { get; }
+
+        public decimal Calculate (decimal price)
+        {
+            if (_amountType == CostAmountType.relative) return _amountValue;
+            else return (_amountValue / 100) * price;
+        }
         Cost(CostDescription Description, CostAmountType AmountType, decimal AmountValue)
         {
             this._description = Description;
@@ -14,5 +20,3 @@ namespace PriceCalculater.Cost
         }
     }
 }
-enum CostDescription {Transport,Pacakging, administrative }
-enum CostAmountType { percentage, relative }

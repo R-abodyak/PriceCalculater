@@ -18,7 +18,11 @@ public class Calculater {
         _discountService = discountService;
         _upcDiscountService = upcDiscountService;
         _costList = costList;
-    }
+            }
+    public Calculater(ITaxService taxService, IDiscountService discountService,
+        IDiscountService upcDiscountService):this ( taxService,  discountService,
+         upcDiscountService, null){ }
+    
   public decimal Calculate(decimal price ,decimal percentage)
     {
         ApplyPrecision(price);
@@ -35,8 +39,16 @@ public class Calculater {
         productPriceDetails.FinalPrice = price;
         decimal discountBefore= CalculateDiscountBefore(productPriceDetails);
         decimal discountAfter= CalculateDiscountAfter(productPriceDetails);
-        decimal tax =  productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice- discountAfter+tax);
+        decimal tax = productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
+        decimal costAmount = 0;
+        if (_costList!= null && _costList.Count != 0)
+        {
+            foreach(Cost item in _costList)
+            {
+                costAmount+=item.Calculate(productPriceDetails.FinalPrice);
+            }
+        }
+        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice- discountAfter+tax+costAmount);
         return productPriceDetails;
     }
     public decimal CalculateDiscountBefore( ProductPriceDetails productPriceDetails) {
@@ -70,4 +82,5 @@ public class Calculater {
         }
         return discountAfter;
     }
+    
 }
