@@ -6,7 +6,7 @@ public class Calculater
     private readonly IDiscountService _discountService;
     private readonly IDiscountService _upcDiscountService;
     private readonly List<Cost> _costList;
-    public Combining CombiningDiscount { get; set; }
+    public Combining CombiningDiscount { get; set; } = Combining.additive;
     public Calculater(ITaxService taxService, IDiscountService discountService,
         IDiscountService upcDiscountService, List<Cost> costList)
     {
@@ -38,6 +38,7 @@ public class Calculater
         productPriceDetails.FinalPrice = price;
         decimal discountBefore = CalculateDiscountBefore(productPriceDetails);
         decimal discountAfter = CalculateDiscountAfter(productPriceDetails);
+       
         decimal tax = productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
         decimal costAmount = 0;
         if (_costList != null && _costList.Count != 0)
@@ -47,14 +48,18 @@ public class Calculater
                 costAmount += productPriceDetails.TotalCostAmount += item.Calculate(price);
             }
         }
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice - discountAfter + tax + costAmount);
+        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.BasePrice - productPriceDetails.DiscountAmount - productPriceDetails.UpcDiscountAmount + productPriceDetails.TaxAmount + productPriceDetails.TotalCostAmount);
         return productPriceDetails;
     }
     public decimal CalculateDiscountBefore(ProductPriceDetails productPriceDetails)
     {
         decimal dicountBefore = 0;
+
         void DecreseFinalPrice(decimal discount)
-        { productPriceDetails.FinalPrice -= discount; }
+        { 
+            productPriceDetails.FinalPrice -= discount; 
+        }
+
         if (_discountService.GetIsBefore())
         {
             decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.BasePrice, _discountService.GetDiscountPercentage());
@@ -82,7 +87,7 @@ public class Calculater
         decimal discountAfter = 0;
         if (!_discountService.GetIsBefore())
         {
-            discountAfter += productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
+            discountAfter += productPriceDetails.DiscountAmount += Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
         }
         decimal partalFinalPrice = productPriceDetails.FinalPrice - discountAfter;
         decimal CombiningPrice = GetCombiningPrice(productPriceDetails.FinalPrice,partalFinalPrice);
