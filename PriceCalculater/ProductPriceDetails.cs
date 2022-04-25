@@ -1,4 +1,5 @@
-﻿public class ProductPriceDetails
+﻿using PriceCalculater;
+public class ProductPriceDetails
 {
     public decimal FinalPrice { get; set; }
     public decimal TaxAmount { get; set; }

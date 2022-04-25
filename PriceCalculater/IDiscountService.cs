@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace PriceCalculater
-{
-    public   interface IDiscountService
+namespace PriceCalculater.Services;
+    public  interface IDiscountService
     {
-        public decimal GetDiscountPercentage();
+        public List<Discount> GetDiscountPercentage(Product product);
     }
     public class DiscountService : IDiscountService
-    {
-        private readonly decimal _percentage;
-        public DiscountService(decimal percentage)
+   { 
+        private readonly decimal _universalpercentage;
+        private readonly Dictionary<long, decimal> _UpcDiscountList;
+      public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
         {
-            this._percentage = percentage;
+            this._universalpercentage = universalPercentage;
+            this._UpcDiscountList = UpcDiscountList;
         }
-        public decimal GetDiscountPercentage()
-        {
-            return _percentage;
-        }
+    public List<Discount> GetDiscountPercentage(Product product) {
+      var Discounts = new List<Discount>();
+        if (_universalpercentage > 0) Discounts.Add
+                (new Discount(_universalpercentage,DiscountType.universal));
+        if (_UpcDiscountList.ContainsKey(product.UPC)) Discounts.Add
+                (new Discount(_UpcDiscountList[product.UPC],DiscountType.upc));
+         return Discounts;
     }
-}
+    }
