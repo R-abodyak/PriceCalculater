@@ -1,4 +1,5 @@
 using PriceCalculater;
+using PriceCalculater.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,11 +33,9 @@ namespace TestingPriceCalculater
         public void TestFinalPrice1(decimal TaxPercentage,decimal DiscountPercentage ,decimal expected )
         {
             MyTax = new TaxService(TaxPercentage);
-            discountService = new DiscountService(DiscountPercentage);
-            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary,product.UPC);
-            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
-            ProductPriceDetails productPriceDetails =calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
+            discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
+            calculater1 = new Calculater(MyTax, discountService);
+            decimal FinalPrice = calculater1.CalculatePrice(product);
             Assert.Equal(expected, FinalPrice,2);
         }
        
@@ -46,15 +45,13 @@ namespace TestingPriceCalculater
         public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
         {
             MyTax = new TaxService(TaxPercentage);
-            discountService = new DiscountService(DiscountPercentage);
-            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
-            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
+            discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
+            calculater1 = new Calculater(MyTax, discountService);
+            decimal FinalPrice = calculater1.CalculatePrice(product);
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, productPriceDetails);
+            Report report = new Report(ConsoleDisplay, calculater1.productPriceDetails);
             report.DisplayProductReport();
             Assert.Equal(ExpectedOutput, stringWriter.ToString());
         }
