@@ -3,58 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace PriceCalculater
-{
-    public   interface IDiscountService
+namespace PriceCalculater.Services;
+    public  interface IDiscountService
     {
-        public decimal GetDiscountPercentage();
-        public bool GetIsBefore();
+        public List<Discount> GetDiscountPercentage(Product product);
     }
     public class DiscountService : IDiscountService
-    {
-        private readonly decimal _percentage;
-        private bool IsBefore;
-        public DiscountService(decimal percentage) : this(percentage, false) { }
-        public DiscountService(decimal percentage, bool IsBefore)
+   { 
+        private readonly decimal _universalpercentage;
+        private readonly Dictionary<long, decimal> _UpcDiscountList;
+        private Precednce universalPrecedence= Precednce.after, upcPrecedence=Precednce.after;
+      public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
         {
-            this.IsBefore = IsBefore;
-            this._percentage = percentage;
-        }
-        public decimal GetDiscountPercentage()
-        {
-            return _percentage;
-        }
-
-        public bool GetIsBefore()
-        {
-            return IsBefore;
-        }
-    }
-    public class UpcDiscountService : IDiscountService
-    {
-        private readonly Dictionary<long,decimal> _UpcDiscountList;
-        private readonly long _upc;
-        public bool IsBefore;
-        public UpcDiscountService(Dictionary<long, decimal> UpcDiscountList,long upc)
-        {
+            this._universalpercentage = universalPercentage;
             this._UpcDiscountList = UpcDiscountList;
-            this._upc = upc;
-            IsBefore = false;
         }
-        public UpcDiscountService(Dictionary<long, decimal> UpcDiscountList, long upc,bool IsBefore)
-        {
-            this._UpcDiscountList = UpcDiscountList;
-            this._upc = upc;
-            this.IsBefore = IsBefore;
-        }
-        public decimal GetDiscountPercentage()
-        {
-            if (!_UpcDiscountList.ContainsKey(_upc)) return 0;
-            return _UpcDiscountList[_upc];
-        }
-        public bool GetIsBefore()
-        {
-            return IsBefore;
-        }
+    public DiscountService(decimal universalPercentage,Precednce universalPrecedence,
+        Dictionary<long, decimal> UpcDiscountList ,Precednce upcPrecedence)
+    {
+        this._universalpercentage = universalPercentage;
+        this._UpcDiscountList = UpcDiscountList;
+        this.universalPrecedence = universalPrecedence;
+        this.upcPrecedence = upcPrecedence; 
     }
-}
+    public List<Discount> GetDiscountPercentage(Product product) {
+      var Discounts = new List<Discount>();
+        if (_universalpercentage > 0) Discounts.Add
+                (new Discount(_universalpercentage,DiscountType.universal,universalPrecedence));
+        if (_UpcDiscountList.ContainsKey(product.UPC)) Discounts.Add
+                (new Discount(_UpcDiscountList[product.UPC],DiscountType.upc,upcPrecedence));
+         return Discounts;
+    }
+    }

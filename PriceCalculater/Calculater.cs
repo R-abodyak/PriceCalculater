@@ -1,64 +1,64 @@
-﻿using PriceCalculater;
+﻿using PriceCalculater.Services;
+namespace PriceCalculater;
 public class Calculater {
     private readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
-    private readonly IDiscountService _upcDiscountService;
-    public Calculater(ITaxService taxService , IDiscountService discountService , IDiscountService upcDiscountService)
-    {    if (taxService == null || discountService == null || upcDiscountService == null)
+   public ProductPriceDetails productPriceDetails { get; set; }
+    public Calculater(ITaxService taxService , IDiscountService discountService )
+    {    if (taxService == null || discountService == null )
             throw new Exception("why are u passing me null :( ");
         _taxService = taxService;
         _discountService = discountService;
-        _upcDiscountService = upcDiscountService;
     }
   public decimal Calculate(decimal price ,decimal percentage)
     {
-        ApplyPrecision(price);
+        price.ApplyPrecision();
         decimal amount = (percentage / 100) * price;
-        return ApplyPrecision(amount);
+        return amount.ApplyPrecision();
     }
-    public decimal ApplyPrecision(decimal price)
+        private void FindProductDetails(Product product)
     {
-        return Math.Round(price, 2);
+        productPriceDetails = new ProductPriceDetails();
+        decimal discountBeforeTax = CalculateDiscountBefore(product);
+        decimal remaningPrice = product.Price - discountBeforeTax;
+        productPriceDetails.TaxAmount = Calculate(remaningPrice, _taxService.GetTaxPercentage());
+        decimal discountAfterTax = CalculateDiscountAfter(product, remaningPrice);
+        productPriceDetails.DiscountAmount = discountBeforeTax + discountAfterTax;
+        productPriceDetails.FinalPrice = product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount.ApplyPrecision();
     }
-     public ProductPriceDetails FindProductDetails(decimal price)
-    {
-        ProductPriceDetails productPriceDetails = new ProductPriceDetails();
-        productPriceDetails.FinalPrice = price;
-        decimal discountBefore= CalculateDiscountBefore(productPriceDetails);
-        decimal discountAfter= CalculateDiscountAfter(productPriceDetails);
-        decimal tax =  productPriceDetails.TaxAmount = Calculate(productPriceDetails.FinalPrice, _taxService.GetTaxPercentage());
-        productPriceDetails.FinalPrice = ApplyPrecision(productPriceDetails.FinalPrice- discountAfter+tax);
-        return productPriceDetails;
+   
+    public decimal CalculateFinalPrice(Product product) {
+        FindProductDetails(product);
+        return productPriceDetails.FinalPrice;
     }
-    public decimal CalculateDiscountBefore( ProductPriceDetails productPriceDetails) {
+    public decimal CalculateDiscountBefore(Product product) {
+        List<Discount> discounts = GetDiscounts(product);
+        decimal remainingPrice = product.Price;
+        var result =discounts.Select(discounts=>discounts).
+                     Where(d=>d.Prcedence==Precednce.before);
         decimal dicountBefore = 0;
-         void DecreseFinalPrice(decimal discount) 
-        {productPriceDetails.FinalPrice -= discount; }
-
-        if (_discountService.GetIsBefore())
+        foreach(var item in result)
         {
-            decimal discount = productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
-            DecreseFinalPrice(discount);
+            decimal discount  = Calculate(remainingPrice, item.Value);
             dicountBefore += discount;
-        }
-        if (_upcDiscountService.GetIsBefore()) {
-            decimal discount = productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _upcDiscountService.GetDiscountPercentage());
-            DecreseFinalPrice(discount);
-            dicountBefore += discount;
+            remainingPrice -= discount;
         }
         return dicountBefore;
     }
-    public decimal CalculateDiscountAfter(ProductPriceDetails productPriceDetails)
+    public decimal CalculateDiscountAfter(Product product ,decimal price)
     {
         decimal discountAfter = 0;
-        if (!_discountService.GetIsBefore())
+        List<Discount> discounts = GetDiscounts(product);
+        var result = discounts.Select(discounts => discounts).
+                     Where(d => d.Prcedence == Precednce.after);
+        foreach(var item in result)
         {
-            discountAfter += productPriceDetails.DiscountAmount = Calculate(productPriceDetails.FinalPrice, _discountService.GetDiscountPercentage());
-        }
-        if (!_upcDiscountService.GetIsBefore())
-        {
-            discountAfter += productPriceDetails.UpcDiscountAmount = Calculate(productPriceDetails.FinalPrice, _upcDiscountService.GetDiscountPercentage());
+            discountAfter += Calculate(price, item.Value);
         }
         return discountAfter;
+    }
+    private List<Discount> GetDiscounts(Product product)
+    {
+        return _discountService.GetDiscountPercentage(product);
     }
 }
