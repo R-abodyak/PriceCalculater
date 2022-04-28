@@ -40,7 +40,7 @@ public class Calculater {
             {
                 if (item.AmountType == CostAmountType.relative) costAmount = item.AmountValue;
                 else costAmount = Calculate(product.Price, item.AmountValue);
-                totalCostAmount += item.Calculate(product.Price).ApplyPrecision();
+                totalCostAmount += costAmount;
                 productPriceDetails.ProductCosts.Add((item.Description, costAmount));
             }
         }
