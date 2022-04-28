@@ -1,4 +1,5 @@
-﻿public class TaxService :ITaxService
+namespace PriceCalculater.Services;
+public class TaxService :ITaxService
 {
     private readonly decimal _percentage;
     public TaxService(decimal percentage)
@@ -10,3 +11,4 @@
         return _percentage;
     }
 }
+

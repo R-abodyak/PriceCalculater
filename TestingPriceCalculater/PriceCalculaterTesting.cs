@@ -1,5 +1,7 @@
+using Moq;
 using PriceCalculater;
-using PriceCalculater.Cost;
+using PriceCalculater.Costs;
+using PriceCalculater.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +13,6 @@ namespace TestingPriceCalculater
         Product product;
         Calculater calculater1;
         IDiscountService discountService;
-        IDiscountService UpcdiscountService;
         Dictionary<long, decimal> UpcDiscountDictonary;
         ITaxService MyTax;
         public TaxTest()
@@ -22,55 +23,55 @@ namespace TestingPriceCalculater
                 UPC = 1234,
                 Price = 20.25M
             };
-
             UpcDiscountDictonary = new Dictionary<long, decimal>
             {
                 {1234,7 },
                 {567,12 }
             };
-            MyTax = new TaxService(20);
-            discountService = new DiscountService(15);
-            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC);
-            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
         }
-      
-        public void TestFinalPrice1( )
+        [Theory]
+        [InlineData(20, 15, 19.84)]
+        public void TestFinalPrice1(decimal TaxPercentage, decimal DiscountPercentage, decimal expected)
         {
-           
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
-            Assert.Equal(19.84m, FinalPrice, 2);
+            MyTax = new TaxService(TaxPercentage);
+            discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
+            calculater1 = new Calculater(MyTax, discountService);
+            decimal FinalPrice = calculater1.CalculateFinalPrice(product);
+            Assert.Equal(expected, FinalPrice, 2);
         }
-
-        [Fact]
-
-        public void TestReport( )
+        [Theory]
+        [InlineData(20, 15, "19.84\r\n4.46\r\n")]
+        //[InlineData(21, 15, "21.46\r\n3.04\r\n")]
+        public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
         {
-           
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
+            MyTax = new TaxService(TaxPercentage);
+            discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
+            calculater1 = new Calculater(MyTax, discountService);
+            decimal FinalPrice = calculater1.CalculateFinalPrice(product);
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, productPriceDetails);
+            Report report = new Report(ConsoleDisplay, calculater1.productPriceDetails);
             report.DisplayProductReport();
-            Assert.Equal("19.84\r\n4.46\r\n", stringWriter.ToString());
+            Assert.Equal("Discount Amount : 4.46\r\nFinal Price :19.84\r\n", stringWriter.ToString());
         }
         [Fact]
         public void testPrecedenceBranch()
         {
             MyTax = new TaxService(20);
-            discountService = new DiscountService(15);
-            UpcdiscountService = new UpcDiscountService(UpcDiscountDictonary, product.UPC, true);
-            calculater1 = new Calculater(MyTax, discountService, UpcdiscountService);
-            ProductPriceDetails productPriceDetails = calculater1.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, productPriceDetails);
-            report.DisplayProductReport();
-            Assert.Equal("19.78\r\n4.24\r\n", stringWriter.ToString());
+            discountService = new DiscountService(15, Precednce.after,
+                UpcDiscountDictonary, Precednce.before);
+            Mock<IDiscountService> mockDiscount = new Mock<IDiscountService>();
+            mockDiscount.Setup(x => x.GetDiscountPercentage(product)).Returns(
+                new List<Discount>() {
+                    new Discount(15,DiscountType.universal,Precednce.after),
+                    new Discount(7,DiscountType.upc,Precednce.before),
+                });
+            calculater1 = new Calculater(MyTax, mockDiscount.Object);
+            decimal FinalPrice = calculater1.CalculateFinalPrice(product);
+            ProductPriceDetails p = calculater1.productPriceDetails;
+            Assert.Equal(19.78m, p.FinalPrice,2);
+            Assert.Equal(4.24m, p.DiscountAmount, 2);
         }
         [Fact]
         public void testExpensesBrancha()
@@ -80,15 +81,16 @@ namespace TestingPriceCalculater
             Cost transport = new Cost(CostDescription.Transport, CostAmountType.relative, 2.2m);
             costList.Add(packging);
             costList.Add(transport);
-            Calculater calculater2 = new Calculater(MyTax, discountService, UpcdiscountService, costList);
-            ProductPriceDetails productPriceDetails = calculater2.FindProductDetails(product.Price);
-            decimal FinalPrice = productPriceDetails.FinalPrice;
-            var stringWriter = new StringWriter();
-            Console.SetOut(stringWriter);
-            IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, productPriceDetails);
-            report.DisplayProductReport();
-            Assert.Equal("22.44\r\n4.46\r\n2.40\r\n", stringWriter.ToString());
+            MyTax = new TaxService(21);
+            discountService = new DiscountService(15, UpcDiscountDictonary);
+            Calculater calculater2 = new Calculater(MyTax, discountService);
+             calculater2.CalculateFinalPrice(product,costList);
+            Assert.Equal(4.46m, calculater2.productPriceDetails.DiscountAmount);
+            Assert.Equal(4.25m, calculater2.productPriceDetails.TaxAmount);
+            Assert.Equal(0.2m, calculater2.productPriceDetails.ProductCosts[0].CostCalculatedResult);
+            Assert.Equal(2.2m, calculater2.productPriceDetails.ProductCosts[1].CostCalculatedResult);
+            Assert.Equal(2.40m, calculater2.productPriceDetails.TotalCostAmount);
+            Assert.Equal(22.44m, calculater2.productPriceDetails.FinalPrice);
         }
     }
 }

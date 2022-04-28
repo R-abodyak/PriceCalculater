@@ -1,11 +1,15 @@
-﻿public class ProductPriceDetails
+﻿using PriceCalculater;
+using PriceCalculater.Costs;
+public class ProductPriceDetails
 {
     public decimal FinalPrice { get; set; }
-
     public decimal BasePrice { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal DiscountAmount { get; set; }
-    public decimal UpcDiscountAmount { get;  set; }
-    public decimal TotalCostAmount { get; set; } 
-
+    public decimal TotalCostAmount { get; set; }
+    public List<( CostDescription CostDescription , decimal CostCalculatedResult)> ProductCosts;
+    public ProductPriceDetails()
+    {
+        ProductCosts = new List<(CostDescription CostDescription, decimal CostCalculatedResult)>();
+    }
 }
