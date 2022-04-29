@@ -105,12 +105,12 @@ namespace TestingPriceCalculater
             costList.Add(transport);
             Calculater calculater2 = new Calculater(MyTax, discountService);
             calculater2.CalculateFinalPrice(product, costList);
-            Assert.Equal(4.46m, calculater2.productPriceDetails.DiscountAmount);
+            Assert.Equal(4.24m, calculater2.productPriceDetails.DiscountAmount);
             Assert.Equal(4.25m, calculater2.productPriceDetails.TaxAmount);
             Assert.Equal(0.2m, calculater2.productPriceDetails.ProductCosts[0].CostCalculatedResult);
             Assert.Equal(2.2m, calculater2.productPriceDetails.ProductCosts[1].CostCalculatedResult);
             Assert.Equal(2.40m, calculater2.productPriceDetails.TotalCostAmount);
-            Assert.Equal(22.44m, calculater2.productPriceDetails.FinalPrice);
+            Assert.Equal(22.66m, calculater2.productPriceDetails.FinalPrice);
         }
     }
 }

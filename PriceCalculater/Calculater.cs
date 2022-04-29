@@ -61,7 +61,7 @@ public class Calculater {
             decimal discount  = Calculate(Price, item.Value);
             dicountBefore += discount;
             remainingPrice -= discount;
-            if (_discountService.GetCombining() == ECombining.multiplictive) Price = remainingPrice;
+            if (_discountService.CombiningWay == ECombining.multiplictive) Price = remainingPrice;
         }
         return dicountBefore;
     }
@@ -77,7 +77,7 @@ public class Calculater {
         {   discount = Calculate(price, item.Value);
             discountAfter += discount;
             remainingPrice-= discount;
-            if (_discountService.GetCombining() == ECombining.multiplictive) price = remainingPrice;
+            if (_discountService.CombiningWay == ECombining.multiplictive) price = remainingPrice;
         }
         return discountAfter;
     }
