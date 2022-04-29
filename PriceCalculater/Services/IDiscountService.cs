@@ -1,3 +1,4 @@
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace PriceCalculater.Services;
         private readonly Dictionary<long, decimal> _UpcDiscountList;
         private Precednce universalPrecedence= Precednce.after, upcPrecedence=Precednce.after;
       public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
+
         {
             this._universalpercentage = universalPercentage;
             this._UpcDiscountList = UpcDiscountList;
