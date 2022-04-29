@@ -30,6 +30,7 @@ public class Calculater {
         productPriceDetails.DiscountAmount = Math.Min(totalDiscount, CapCalculatedResult);
         FindCostDetails(product, _costList);
         productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
+        productPriceDetails.Currency=product.Currency;
     }
     private decimal CalculateCap(Product product, Cap cap, decimal CapCalculatedResult)
     {

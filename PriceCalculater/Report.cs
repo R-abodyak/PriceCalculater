@@ -10,9 +10,9 @@ public class Report
     }
     public void DisplayProductReport()
     {
-        _displayService.Display("Discount Amount : ",_productPriceDetails.DiscountAmount);
-        _displayService.Display("Cost : " ,_productPriceDetails.TotalCostAmount);
-        _displayService.Display("Final Price :",_productPriceDetails.FinalPrice);
+        _displayService.Display("Discount Amount : ",_productPriceDetails.DiscountAmount, _productPriceDetails.Currency);
+        _displayService.Display("Cost : " ,_productPriceDetails.TotalCostAmount, _productPriceDetails.Currency);
+        _displayService.Display("Final Price :",_productPriceDetails.FinalPrice, _productPriceDetails.Currency);
         DisplayCostItems();
     }
     private void DisplayCostItems()
@@ -20,7 +20,7 @@ public class Report
         {
             foreach( var item in _productPriceDetails.ProductCosts)
             {  
-                _displayService.Display(item.CostDescription.ToString(), item.CostCalculatedResult);
+                _displayService.Display(item.CostDescription.ToString(), item.CostCalculatedResult, _productPriceDetails.Currency);
             }
         }
     }

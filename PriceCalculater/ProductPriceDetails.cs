@@ -7,6 +7,7 @@ public class ProductPriceDetails
     public decimal TaxAmount { get; set; }
     public decimal DiscountAmount { get; set; }
     public decimal TotalCostAmount { get; set; }
+    public Iso_3 Currency { get; set; }
     public List<( CostDescription CostDescription , decimal CostCalculatedResult)> ProductCosts;
     public ProductPriceDetails()
     {
