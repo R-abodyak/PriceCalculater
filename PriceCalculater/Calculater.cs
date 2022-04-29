@@ -10,7 +10,6 @@ public class Calculater {
             throw new Exception("why are u passing me null :( ");
         _taxService = taxService;
         _discountService = discountService;
-       
     }
     public decimal Calculate(decimal price ,decimal percentage)
     {
@@ -29,7 +28,6 @@ public class Calculater {
         FindCostDetails(product, _costList);
         productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
     }
-
     private void FindCostDetails(Product product, List<Cost>? _costList)
     {
         decimal totalCostAmount = 0;
@@ -45,9 +43,7 @@ public class Calculater {
             }
         }
         productPriceDetails.TotalCostAmount = totalCostAmount;
-        
     }
-
     public decimal CalculateFinalPrice(Product product, List<Cost>? _costList = null) 
     {
         FindProductDetails(product, _costList);
@@ -55,27 +51,33 @@ public class Calculater {
      }
     public decimal CalculateDiscountBefore(Product product) {
         List<Discount> discounts = GetDiscounts(product);
+        decimal Price  = product.Price;
         decimal remainingPrice = product.Price;
         var result =discounts.Select(discounts=>discounts).
                      Where(d=>d.Prcedence==Precednce.before);
         decimal dicountBefore = 0;
         foreach(var item in result)
         {
-            decimal discount  = Calculate(remainingPrice, item.Value);
+            decimal discount  = Calculate(Price, item.Value);
             dicountBefore += discount;
             remainingPrice -= discount;
+            if (_discountService.GetCombining() == ECombining.multiplictive) Price = remainingPrice;
         }
         return dicountBefore;
     }
     public decimal CalculateDiscountAfter(Product product ,decimal price)
     {
         decimal discountAfter = 0;
+        decimal discount = 0;
+        decimal remainingPrice = price;
         List<Discount> discounts = GetDiscounts(product);
         var result = discounts.Select(discounts => discounts).
                      Where(d => d.Prcedence == Precednce.after);
         foreach(var item in result)
-        {
-            discountAfter += Calculate(price, item.Value);
+        {   discount = Calculate(price, item.Value);
+            discountAfter += discount;
+            remainingPrice-= discount;
+            if (_discountService.GetCombining() == ECombining.multiplictive) price = remainingPrice;
         }
         return discountAfter;
     }
@@ -83,5 +85,4 @@ public class Calculater {
     {
         return _discountService.GetDiscountPercentage(product);
     }
-    
 }
