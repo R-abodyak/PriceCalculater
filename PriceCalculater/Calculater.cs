@@ -17,16 +17,28 @@ public class Calculater {
         decimal amount = (percentage / 100) * price;
         return amount.ApplyPrecision();
     }
-        private void FindProductDetails(Product product, List<Cost>? _costList =null)
+        private void FindProductDetails(Product product, List<Cost>? _costList =null,Cap cap = null)
     {
         productPriceDetails = new ProductPriceDetails();
         decimal discountBeforeTax = CalculateDiscountBefore(product);
         decimal remaningPrice = product.Price - discountBeforeTax;
         productPriceDetails.TaxAmount = Calculate(remaningPrice, _taxService.GetTaxPercentage());
         decimal discountAfterTax = CalculateDiscountAfter(product, remaningPrice);
-        productPriceDetails.DiscountAmount = discountBeforeTax + discountAfterTax;
+        decimal totalDiscount = discountBeforeTax + discountAfterTax;
+        decimal CapCalculatedResult = totalDiscount;
+        CapCalculatedResult = CalculateCap(product, cap, CapCalculatedResult);
+        productPriceDetails.DiscountAmount = Math.Min(totalDiscount, CapCalculatedResult);
         FindCostDetails(product, _costList);
         productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
+    }
+    private decimal CalculateCap(Product product, Cap cap, decimal CapCalculatedResult)
+    {
+        if (cap != null)
+        {
+            if (cap._capType == EAmountType.relative) CapCalculatedResult = cap._amountValue;
+            else CapCalculatedResult = Calculate(product.Price, cap._amountValue);
+        }
+        return CapCalculatedResult;
     }
     private void FindCostDetails(Product product, List<Cost>? _costList)
     {
@@ -44,9 +56,9 @@ public class Calculater {
         }
         productPriceDetails.TotalCostAmount = totalCostAmount;
     }
-    public decimal CalculateFinalPrice(Product product, List<Cost>? _costList = null) 
+    public decimal CalculateFinalPrice(Product product, List<Cost>? _costList = null,Cap cap = null) 
     {
-        FindProductDetails(product, _costList);
+        FindProductDetails(product, _costList,cap);
         return productPriceDetails.FinalPrice;
      }
     public decimal CalculateDiscountBefore(Product product) {
