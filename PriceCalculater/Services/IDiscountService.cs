@@ -1,4 +1,3 @@
-
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ namespace PriceCalculater.Services;
     public  interface IDiscountService
     {
         public List<Discount> GetDiscountPercentage(Product product);
-
+        public ECombining GetCombining();
 }
     public class DiscountService : IDiscountService
    { 
@@ -17,7 +16,6 @@ namespace PriceCalculater.Services;
         private Precednce universalPrecedence= Precednce.after, upcPrecedence=Precednce.after;
        public ECombining CombiningDiscount { get; set; } = ECombining.additive;
     public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
-
         {
             this._universalpercentage = universalPercentage;
             this._UpcDiscountList = UpcDiscountList;
@@ -38,4 +36,8 @@ namespace PriceCalculater.Services;
                 (new Discount(_UpcDiscountList[product.UPC],DiscountType.upc,upcPrecedence));
          return Discounts;
     }
+    public ECombining GetCombining()
+    {
+        return CombiningDiscount;
     }
+}
