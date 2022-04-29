@@ -7,14 +7,14 @@ namespace PriceCalculater.Services;
     public  interface IDiscountService
     {
         public List<Discount> GetDiscountPercentage(Product product);
-        public ECombining GetCombining();
+       public ECombining CombiningWay { get; set; }
 }
     public class DiscountService : IDiscountService
    { 
         private readonly decimal _universalpercentage;
         private readonly Dictionary<long, decimal> _UpcDiscountList;
         private Precednce universalPrecedence= Precednce.after, upcPrecedence=Precednce.after;
-       public ECombining CombiningDiscount { get; set; } = ECombining.additive;
+       public ECombining CombiningWay { get; set; } = ECombining.additive;
     public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
         {
             this._universalpercentage = universalPercentage;
@@ -35,9 +35,5 @@ namespace PriceCalculater.Services;
         if (_UpcDiscountList.ContainsKey(product.UPC)) Discounts.Add
                 (new Discount(_UpcDiscountList[product.UPC],DiscountType.upc,upcPrecedence));
          return Discounts;
-    }
-    public ECombining GetCombining()
-    {
-        return CombiningDiscount;
     }
 }
