@@ -8,13 +8,15 @@ namespace PriceCalculater.Services;
     public  interface IDiscountService
     {
         public List<Discount> GetDiscountPercentage(Product product);
-    }
+
+}
     public class DiscountService : IDiscountService
    { 
         private readonly decimal _universalpercentage;
         private readonly Dictionary<long, decimal> _UpcDiscountList;
         private Precednce universalPrecedence= Precednce.after, upcPrecedence=Precednce.after;
-      public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
+       public ECombining CombiningDiscount { get; set; } = ECombining.additive;
+    public DiscountService(decimal universalPercentage , Dictionary<long, decimal> UpcDiscountList)
 
         {
             this._universalpercentage = universalPercentage;
