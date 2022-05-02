@@ -37,7 +37,7 @@ namespace TestingPriceCalculater
             discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
             calculater1 = new Calculater(MyTax, discountService);
             decimal FinalPrice = calculater1.CalculateFinalPrice(product);
-            Assert.Equal(expected, FinalPrice,2);
+            Assert.Equal(expected, FinalPrice, 2);
         }
         [Theory]
         [InlineData(20, 15, "19.84\r\n4.46\r\n")]
@@ -47,11 +47,11 @@ namespace TestingPriceCalculater
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
             calculater1 = new Calculater(MyTax, discountService);
-            decimal FinalPrice = calculater1.CalculateFinalPrice(product);
+            var productPriceDetails = calculater1.FindProductDetails(product);
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, calculater1.productPriceDetails);
+            Report report = new Report(ConsoleDisplay, productPriceDetails);
             report.DisplayProductReport();
             Assert.Equal(ExpectedOutput, stringWriter.ToString());
         }
@@ -59,8 +59,8 @@ namespace TestingPriceCalculater
         public void testPrecedenceBranch()
         {
             MyTax = new TaxService(20);
-            discountService = new DiscountService(15,Precednce.after,
-                UpcDiscountDictonary,Precednce.before);
+            discountService = new DiscountService(15, Precednce.after,
+                UpcDiscountDictonary, Precednce.before);
             Mock<IDiscountService> mockDiscount = new Mock<IDiscountService>();
             mockDiscount.Setup(x => x.GetDiscountPercentage(product)).Returns(
                 new List<Discount>() {
@@ -69,10 +69,11 @@ namespace TestingPriceCalculater
                 });
             calculater1 = new Calculater(MyTax, mockDiscount.Object);
             decimal FinalPrice = calculater1.CalculateFinalPrice(product);
+            var productPriceDetails = calculater1.FindProductDetails(product);
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, calculater1.productPriceDetails);
+            Report report = new Report(ConsoleDisplay, productPriceDetails);
             report.DisplayProductReport();
             Assert.Equal("19.78\r\n4.24\r\n", stringWriter.ToString());
         }
