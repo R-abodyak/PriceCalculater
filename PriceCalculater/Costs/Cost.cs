@@ -1,15 +1,19 @@
 ﻿namespace PriceCalculater.Costs
 {
-    public class  Cost
+    public class Cost
     {
-        public  CostDescription Description { get; }
-        public  CostAmountType AmountType { get; }
-        public  decimal AmountValue { get; }
-       public Cost(CostDescription Description, CostAmountType AmountType, decimal AmountValue)
+        public CostCategory Category
         {
-            this.Description = Description;
-            this.AmountType = AmountType;
-            this.AmountValue = AmountValue;
+            get; set;
         }
+        public CostAmountType AmountType
+        {
+            get; set;
+        }
+        public decimal AmountValue
+        {
+            get; set;
+        }
+
     }
 }

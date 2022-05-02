@@ -1,2 +1,2 @@
 ﻿
-public enum CostDescription {Transport,Pacakging, administrative }
+public enum CostCategory {Transport,Pacakging, administrative }
