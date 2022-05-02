@@ -110,5 +110,35 @@ namespace TestingPriceCalculater
             Assert.Equal(2.40m, productPriceDetails.TotalCostAmount);
             Assert.Equal(22.44m, productPriceDetails.FinalPrice);
         }
+
+        [Fact]
+        public void TestCombiningOutputWithoutDisplay()
+        {
+            Cost packging = new Cost()
+            {
+                Category = CostCategory.Pacakging,
+                AmountType = CostAmountType.percentage,
+                AmountValue = 1
+            };
+            Cost transport = new Cost
+            {
+                Category = CostCategory.Transport,
+                AmountType = CostAmountType.relative,
+                AmountValue = 2.2m
+            };
+            costService = new CostService(productCostsDictonary);
+            costService.AddNewCost(product, packging);
+            costService.AddNewCost(product, transport);
+            MyTax = new TaxService(21);
+            discountService = new DiscountService(15, UpcDiscountDictonary);
+            Calculater calculater2 = new Calculater(MyTax, discountService, costService);
+            var productPriceDetails = calculater2.FindProductDetails(product);
+            Assert.Equal(4.46m, productPriceDetails.DiscountAmount);
+            Assert.Equal(4.25m, productPriceDetails.TaxAmount);
+            Assert.Equal(0.2m, productPriceDetails.ProductCosts[0].CostCalculatedResult);
+            Assert.Equal(2.2m, productPriceDetails.ProductCosts[1].CostCalculatedResult);
+            Assert.Equal(2.40m, productPriceDetails.TotalCostAmount);
+            Assert.Equal(22.44m, productPriceDetails.FinalPrice);
+        }
     }
 }

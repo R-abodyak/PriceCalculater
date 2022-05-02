@@ -34,6 +34,7 @@ public class Calculater
 
         var discountBeforeTax = CalculateDiscountBefore(product);
         decimal remaningPrice = product.Price - discountBeforeTax;
+        productPriceDetails.TaxAmount = Calculate(remaningPrice, _taxService.GetTaxPercentage());
         var discountAfterTax = CalculateDiscountAfter(product, remaningPrice);
         productPriceDetails.DiscountAmount = discountBeforeTax + discountAfterTax;
         var costList = _costService.GetCosts(product);
