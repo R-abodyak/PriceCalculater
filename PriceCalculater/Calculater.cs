@@ -6,6 +6,7 @@ public class Calculater
     private readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly ICostService _costService;
+    public Combining CombiningDiscount { get; set; } = Combining.additive;
 
     public Calculater(ITaxService taxService, IDiscountService discountService, ICostService costService)
     {
