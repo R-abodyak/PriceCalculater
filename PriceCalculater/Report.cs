@@ -1,14 +1,13 @@
 ﻿public class Report
 {
-   private readonly IDisplayService _displayService;
-    private readonly ProductPriceDetails _productPriceDetails;
-    public Report(IDisplayService displayService , ProductPriceDetails productPriceDetails)
+    private readonly IDisplayService _displayService;
+    public Report(IDisplayService displayService)
     {
         this._displayService = displayService;
-        this._productPriceDetails = productPriceDetails;
     }
-    public void DisplayProductReport()
-    {   _displayService.Display(_productPriceDetails.FinalPrice);
-        _displayService.Display(_productPriceDetails.DiscountAmount);
+    public void DisplayProductReport(ProductPriceDetails productPriceDetails)
+    {
+        _displayService.Display(productPriceDetails.FinalPrice);
+        _displayService.Display(productPriceDetails.DiscountAmount);
     }
 }

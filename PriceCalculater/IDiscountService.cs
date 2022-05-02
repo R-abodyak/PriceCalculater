@@ -20,9 +20,9 @@ namespace PriceCalculater.Services;
     public List<Discount> GetDiscountPercentage(Product product) {
       var Discounts = new List<Discount>();
         if (_universalpercentage > 0) Discounts.Add
-                (new Discount(_universalpercentage,DiscountType.universal));
+                (new Discount(_universalpercentage,DiscountType.Universal));
         if (_UpcDiscountList.ContainsKey(product.UPC)) Discounts.Add
-                (new Discount(_UpcDiscountList[product.UPC],DiscountType.upc));
+                (new Discount(_UpcDiscountList[product.UPC],DiscountType.Upc));
          return Discounts;
     }
     }
