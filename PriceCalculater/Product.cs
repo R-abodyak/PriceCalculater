@@ -13,4 +13,4 @@ public class Product
     public Iso_3 Currency { get; set; } = Iso_3.USD;
 }
 public enum Iso_3 { USD, GBP, JPY };
-}
+

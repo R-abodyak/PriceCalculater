@@ -1,27 +1,27 @@
 ﻿using PriceCalculater.Costs;
 public class Report
 {
-   private readonly IDisplayService _displayService;
-    private readonly ProductPriceDetails _productPriceDetails;
-    public Report(IDisplayService displayService , ProductPriceDetails productPriceDetails)
+    private readonly IDisplayService _displayService;
+    public Report(IDisplayService displayService)
     {
         this._displayService = displayService;
-        this._productPriceDetails = productPriceDetails;
+
     }
-    public void DisplayProductReport()
+    public void DisplayProductReport(ProductPriceDetails productPriceDetails)
     {
-        _displayService.Display("Discount Amount : ",_productPriceDetails.DiscountAmount);
-        _displayService.Display("Cost : " ,_productPriceDetails.TotalCostAmount);
-        _displayService.Display("Final Price :",_productPriceDetails.FinalPrice);
-        DisplayCostItems();
+        _displayService.Display("Discount Amount : ", productPriceDetails.DiscountAmount, productPriceDetails.Currency);
+        _displayService.Display("Cost : ", productPriceDetails.TotalCostAmount, productPriceDetails.Currency);
+        _displayService.Display("Final Price :", productPriceDetails.FinalPrice, productPriceDetails.Currency);
+        DisplayCostItems(productPriceDetails);
     }
-    private void DisplayCostItems()
-    { if(_productPriceDetails.ProductCosts != null && _productPriceDetails.ProductCosts.Count != 0)
+    private void DisplayCostItems(ProductPriceDetails productPriceDetails)
+    {
+        if (productPriceDetails.ProductCosts != null && productPriceDetails.ProductCosts.Count != 0)
         {
-            foreach( var item in _productPriceDetails.ProductCosts)
-            {  
-                _displayService.Display(item.CostDescription.ToString(), item.CostCalculatedResult);
+            foreach (var item in productPriceDetails.ProductCosts)
+            {
+                _displayService.Display(item.CostDescription.ToString(), item.CostCalculatedResult, productPriceDetails.Currency);
             }
         }
     }
-    }
+}
