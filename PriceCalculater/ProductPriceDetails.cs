@@ -22,6 +22,10 @@ public class ProductPriceDetails
     {
         get; set;
     }
+    public Iso_3 Currency
+    {
+        get; set;
+    }
     public List<(CostCategory CostDescription, decimal CostCalculatedResult)> ProductCosts;
     public ProductPriceDetails()
     {

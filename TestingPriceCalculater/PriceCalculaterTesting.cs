@@ -47,8 +47,8 @@ namespace TestingPriceCalculater
         [Theory]
         [InlineData(20, 15, "19.84\r\n4.46\r\n")]
         //[InlineData(21, 15, "21.46\r\n3.04\r\n")]
-        public void TestReport(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
-        {
+        public void TestReportwithCurrency(decimal TaxPercentage, decimal DiscountPercentage, String ExpectedOutput)
+        {   product.Currency = Iso_3.GBP;
             MyTax = new TaxService(TaxPercentage);
             discountService = new DiscountService(DiscountPercentage, UpcDiscountDictonary);
             costService = new CostService(productCostsDictonary);
@@ -58,9 +58,9 @@ namespace TestingPriceCalculater
             var stringWriter = new StringWriter();
             Console.SetOut(stringWriter);
             IDisplayService ConsoleDisplay = new ConsoleDisplayService();
-            Report report = new Report(ConsoleDisplay, productPriceDetails);
-            report.DisplayProductReport();
-            Assert.Equal("Discount Amount : 4.46\r\nFinal Price :19.84\r\n", stringWriter.ToString());
+            Report report = new Report(ConsoleDisplay);
+            report.DisplayProductReport(productPriceDetails);
+            Assert.Equal("Discount Amount : 4.46\r\n4.46 GBP\r\nFinal Price :19.84\r\n19.84 GBP\r\n", stringWriter.ToString());
         }
         [Fact]
         public void testPrecedenceBranch()

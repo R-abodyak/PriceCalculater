@@ -43,6 +43,7 @@ public class Calculater
         var costList = _costService.GetCosts(product);
         FindCostDetails(productPriceDetails, product, costList);
         productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
+        productPriceDetails.Currency = product.Currency;
         return productPriceDetails;
     }
     private decimal CalculateCap(Product product, Cap cap, decimal CapCalculatedResult)
