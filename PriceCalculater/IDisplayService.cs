@@ -11,6 +11,6 @@ public class ConsoleDisplayService : IDisplayService
         Console.Write(msg);
         Console.WriteLine(formatString, value);
         Console.Write(formatString, value);
-        Console.WriteLine("  " + currency);
+        Console.WriteLine(" " + currency);
     }
 }
