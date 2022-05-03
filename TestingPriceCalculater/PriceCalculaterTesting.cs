@@ -140,5 +140,28 @@ namespace TestingPriceCalculater
             Assert.Equal(2.40m, productPriceDetails.TotalCostAmount);
             Assert.Equal(22.44m, productPriceDetails.FinalPrice);
         }
+        [Theory]
+        [InlineData(AmountType.percentage, 20, 4.25, 4.05, 20.45)]
+        [InlineData(AmountType.relative, 4, 4.25, 4.00, 20.50)]
+        [InlineData(AmountType.percentage, 30, 4.25, 4.46, 20.04)]
+        public void TestCapCases(AmountType type, decimal val, decimal tax, decimal discount, decimal total)
+        {
+            MyTax = new TaxService(21);
+            discountService = new DiscountService(15, UpcDiscountDictonary);
+            Cap cap = new Cap()
+            {
+                _capType = type,
+                _amountValue = val,
+            };
+            costService = new CostService(productCostsDictonary);
+
+            Calculater calculater2 = new Calculater(MyTax, discountService, costService);
+            calculater2.CombiningDiscount = Combining.additive;
+            var productPriceDetails = calculater2.FindProductDetails(product, cap);
+            Assert.Equal(discount, productPriceDetails.DiscountAmount);
+            Assert.Equal(tax, productPriceDetails.TaxAmount);
+            Assert.Equal(total, productPriceDetails.FinalPrice);
+        }
     }
+
 }

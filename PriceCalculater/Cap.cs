@@ -8,8 +8,8 @@ namespace PriceCalculater
 {
     public class Cap
     {
-        public AmountType _capType { get; } = AmountType.relative;
-        public decimal _amountValue { get; } = 0;
+        public AmountType _capType { get; set; } = AmountType.relative;
+        public decimal _amountValue { get; set; } = 0;
     }
     public enum AmountType
     {
