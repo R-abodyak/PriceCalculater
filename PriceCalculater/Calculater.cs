@@ -63,14 +63,17 @@ public class Calculater
         {
             foreach (Cost item in _costList)
             {
-                if (item.AmountType == CostAmountType.relative) costAmount = item.AmountValue;
-                else costAmount = Calculate(product.Price, item.AmountValue);
+                if (item.AmountType == CostAmountType.relative)
+                    costAmount = item.AmountValue;
+                else
+                    costAmount = Calculate(product.Price, item.AmountValue);
+
                 totalCostAmount += costAmount;
                 productPriceDetails.ProductCosts.Add((item.Category, costAmount));
             }
-        }
-        productPriceDetails.TotalCostAmount = totalCostAmount;
 
+            productPriceDetails.TotalCostAmount = totalCostAmount;
+        }
     }
 
     public decimal CalculateFinalPrice(Product product)
