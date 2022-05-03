@@ -4,15 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PriceCalculater
+namespace PriceCalculator
 {
     public class Cap
     {
-        public AmountType _capType { get; set; } = AmountType.relative;
-        public decimal _amountValue { get; set; } = 0;
+        public AmountType CapType { get; set; } = AmountType.Absolute;
+        public decimal AmountValue { get; set; } = 0;
     }
+
     public enum AmountType
     {
-        percentage, relative
+        Percentage,
+        Absolute
     }
 }

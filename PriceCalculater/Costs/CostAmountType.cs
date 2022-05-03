@@ -1,7 +1,7 @@
-﻿namespace PriceCalculater.Costs;
+﻿namespace PriceCalculator.Costs;
 
 public enum CostAmountType
 {
     Percentage,
-    Relative
+    Absolute
 }

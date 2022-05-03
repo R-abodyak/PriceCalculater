@@ -1,11 +1,11 @@
-﻿namespace PriceCalculater.Services;
+﻿namespace PriceCalculator.Services;
 
 public class DiscountService : IDiscountService
 {
     private readonly decimal _universalPercentage;
     private readonly Dictionary<long, decimal> _upcDiscountList;
-    private readonly Precednce _universalPrecedence = Precednce.after;
-    private readonly Precednce _upcPrecedence = Precednce.after;
+    private readonly Precednce _universalPrecedence = Precednce.After;
+    private readonly Precednce _upcPrecedence = Precednce.After;
 
     public DiscountService(decimal universalPercentage, Dictionary<long, decimal> upcDiscountList)
 
@@ -28,10 +28,10 @@ public class DiscountService : IDiscountService
         var discounts = new List<Discount>();
         if (_universalPercentage > 0)
             discounts.Add
-                (new Discount(_universalPercentage, DiscountType.universal, _universalPrecedence));
+                (new Discount(_universalPercentage, DiscountType.Universal, _universalPrecedence));
         if (_upcDiscountList.ContainsKey(product.UPC))
             discounts.Add
-                (new Discount(_upcDiscountList[product.UPC], DiscountType.upc, _upcPrecedence));
+                (new Discount(_upcDiscountList[product.UPC], DiscountType.Upc, _upcPrecedence));
         return discounts;
     }
 }

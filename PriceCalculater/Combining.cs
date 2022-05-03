@@ -1,6 +1,7 @@
-﻿namespace PriceCalculater;
+﻿namespace PriceCalculator;
 
 public enum Combining
 {
-    additive, multiplictive
+    Additive,
+    Multiplictive
 }

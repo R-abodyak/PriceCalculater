@@ -1,4 +1,4 @@
-﻿namespace PriceCalculater.Services;
+﻿namespace PriceCalculator.Services;
 
 public interface ITaxService
 {

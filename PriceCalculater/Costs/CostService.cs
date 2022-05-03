@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PriceCalculater.Costs
+namespace PriceCalculator.Costs
 {
     public class CostService : ICostService
     {
