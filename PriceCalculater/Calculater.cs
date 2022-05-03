@@ -28,18 +28,31 @@ public class Calculater
         decimal amount = (percentage / 100) * price;
         return amount.ApplyPrecision();
     }
-    public ProductPriceDetails FindProductDetails(Product product)
+    public ProductPriceDetails FindProductDetails(Product product, Cap cap = null)
     {
         var productPriceDetails = new ProductPriceDetails();
         var discountBeforeTax = CalculateDiscountBefore(product);
         decimal remaningPrice = product.Price - discountBeforeTax;
         productPriceDetails.TaxAmount = Calculate(remaningPrice, _taxService.GetTaxPercentage());
         var discountAfterTax = CalculateDiscountAfter(product, remaningPrice);
-        productPriceDetails.DiscountAmount = discountBeforeTax + discountAfterTax;
+
+        decimal totalDiscount = discountBeforeTax + discountAfterTax;
+        decimal CapCalculatedResult = totalDiscount;
+        CapCalculatedResult = CalculateCap(product, cap, CapCalculatedResult);
+        productPriceDetails.DiscountAmount = Math.Min(totalDiscount, CapCalculatedResult);
         var costList = _costService.GetCosts(product);
         FindCostDetails(productPriceDetails, product, costList);
         productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
         return productPriceDetails;
+    }
+    private decimal CalculateCap(Product product, Cap cap, decimal CapCalculatedResult)
+    {
+        if (cap != null)
+        {
+            if (cap._capType == AmountType.relative) CapCalculatedResult = cap._amountValue;
+            else CapCalculatedResult = Calculate(product.Price, cap._amountValue);
+        }
+        return CapCalculatedResult;
     }
 
     private void FindCostDetails(ProductPriceDetails productPriceDetails, Product product, List<Cost>? _costList)
