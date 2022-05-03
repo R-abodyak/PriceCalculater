@@ -85,14 +85,14 @@ namespace TestingPriceCalculater
         {
             Cost packging = new Cost()
             {
-                Category = CostCategory.Pacakging,
-                AmountType = CostAmountType.percentage,
+                Category = CostCategory.Packging,
+                AmountType = CostAmountType.Percentage,
                 AmountValue = 1
             };
             Cost transport = new Cost
             {
                 Category = CostCategory.Transport,
-                AmountType = CostAmountType.relative,
+                AmountType = CostAmountType.Relative,
                 AmountValue = 2.2m
             };
             costService = new CostService(productCostsDictonary);
@@ -115,14 +115,14 @@ namespace TestingPriceCalculater
         {
             Cost packging = new Cost()
             {
-                Category = CostCategory.Pacakging,
-                AmountType = CostAmountType.percentage,
+                Category = CostCategory.Packging,
+                AmountType = CostAmountType.Percentage,
                 AmountValue = 1
             };
             Cost transport = new Cost
             {
                 Category = CostCategory.Transport,
-                AmountType = CostAmountType.relative,
+                AmountType = CostAmountType.Relative,
                 AmountValue = 2.2m
             };
             costService = new CostService(productCostsDictonary);

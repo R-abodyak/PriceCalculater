@@ -1,2 +1,7 @@
-﻿
-public enum CostAmountType { percentage, relative }
+﻿namespace PriceCalculater.Costs;
+
+public enum CostAmountType
+{
+    Percentage,
+    Relative
+}

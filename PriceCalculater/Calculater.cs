@@ -63,7 +63,7 @@ public class Calculater
         {
             foreach (Cost item in _costList)
             {
-                if (item.AmountType == CostAmountType.relative)
+                if (item.AmountType == CostAmountType.Relative)
                     costAmount = item.AmountValue;
                 else
                     costAmount = Calculate(product.Price, item.AmountValue);

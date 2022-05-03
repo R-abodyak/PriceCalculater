@@ -1,2 +1,8 @@
-﻿
-public enum CostCategory {Transport,Pacakging, administrative }
+﻿namespace PriceCalculater.Costs;
+
+public enum CostCategory
+{
+    Transport,
+    Packging,
+    Administrative
+}
