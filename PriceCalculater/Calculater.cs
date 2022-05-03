@@ -3,6 +3,7 @@ using PriceCalculater.Services;
 namespace PriceCalculater;
 public class Calculater
 {
+    delegate decimal ApplyCombining(decimal x);
     private readonly ITaxService _taxService;
     private readonly IDiscountService _discountService;
     private readonly ICostService _costService;
@@ -30,8 +31,6 @@ public class Calculater
     public ProductPriceDetails FindProductDetails(Product product)
     {
         var productPriceDetails = new ProductPriceDetails();
-        List<Discount> discounts = _discountService.GetDiscountPercentage(product);
-
         var discountBeforeTax = CalculateDiscountBefore(product);
         decimal remaningPrice = product.Price - discountBeforeTax;
         productPriceDetails.TaxAmount = Calculate(remaningPrice, _taxService.GetTaxPercentage());
@@ -69,6 +68,8 @@ public class Calculater
 
     public decimal CalculateDiscountBefore(Product product)
     {
+
+
         List<Discount> discounts = _discountService.GetDiscountPercentage(product);
         decimal Price = product.Price;
         decimal remainingPrice = product.Price;
