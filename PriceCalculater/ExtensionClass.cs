@@ -8,9 +8,9 @@ namespace PriceCalculater
 {
     public static class ExtensionClass
     {
-        public static decimal ApplyPrecision(this decimal price)
+        public static decimal ApplyPrecision(this decimal price, int precision)
         {
-            return Math.Round(price, 2);
+            return Math.Round(price, precision);
         }
     }
 }

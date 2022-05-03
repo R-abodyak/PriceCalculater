@@ -24,9 +24,8 @@ public class Calculater
     }
     public decimal Calculate(decimal price, decimal percentage)
     {
-        price.ApplyPrecision();
-        decimal amount = (percentage / 100) * price;
-        return amount.ApplyPrecision();
+        decimal amount = (percentage / 100) * price.ApplyPrecision(4);
+        return amount.ApplyPrecision(2);
     }
     public ProductPriceDetails FindProductDetails(Product product, Cap cap = null)
     {
@@ -42,7 +41,7 @@ public class Calculater
         productPriceDetails.DiscountAmount = Math.Min(totalDiscount, CapCalculatedResult);
         var costList = _costService.GetCosts(product);
         FindCostDetails(productPriceDetails, product, costList);
-        productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision();
+        productPriceDetails.FinalPrice = (product.Price + productPriceDetails.TaxAmount - productPriceDetails.DiscountAmount + productPriceDetails.TotalCostAmount).ApplyPrecision(2);
         productPriceDetails.Currency = product.Currency;
         return productPriceDetails;
     }
