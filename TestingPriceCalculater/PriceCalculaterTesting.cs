@@ -140,6 +140,7 @@ namespace TestingPriceCalculater
             Assert.Equal(2.40m, productPriceDetails.TotalCostAmount);
             Assert.Equal(22.44m, productPriceDetails.FinalPrice);
         }
+
         [Theory]
         [InlineData(AmountType.percentage, 20, 4.25, 4.05, 20.45)]
         [InlineData(AmountType.relative, 4, 4.25, 4.00, 20.50)]
@@ -162,6 +163,7 @@ namespace TestingPriceCalculater
             Assert.Equal(tax, productPriceDetails.TaxAmount);
             Assert.Equal(total, productPriceDetails.FinalPrice);
         }
+
     }
 
 }
